@@ -76,7 +76,9 @@ describe('parse', () =>
 			phone              : '1112223344',
 			ext                : undefined,
 			valid              : false,
-			possible           : true
+			possible           : true,
+			starts_at 				 : 0,
+			ends_at 					 : 10,
 		})
 
 		// International phone number.
@@ -89,7 +91,9 @@ describe('parse', () =>
 			phone              : '1112223344',
 			ext                : undefined,
 			valid              : false,
-			possible           : true
+			possible           : true,
+			starts_at 				 : 0,
+			ends_at 					 : 12,
 		})
 
 		// International phone number.
@@ -101,18 +105,22 @@ describe('parse', () =>
 			phone              : '011222333',
 			ext                : undefined,
 			valid              : false,
-			possible           : true
+			possible           : true,
+			starts_at 				 : 0,
+			ends_at 					 : 12,
 		})
 
 		// Too short.
-		parse('+7 (800) 55-35-35', { extended: true }).should.deep.equal
+		parse('+7 (800) 55-35-35 hey', { extended: true }).should.deep.equal
 		({
 			country            : undefined,
 			countryCallingCode : '7',
 			phone              : '800553535',
 			ext                : undefined,
 			valid              : false,
-			possible           : false
+			possible           : false,
+			starts_at 				 : 0,
+			ends_at 					 : 17,
 		})
 
 		// Too long.
@@ -123,7 +131,22 @@ describe('parse', () =>
 			phone              : '80055353555',
 			ext                : undefined,
 			valid              : false,
-			possible           : false
+			possible           : false,
+			starts_at 				 : 0,
+			ends_at 					 : 20,
+		})
+
+		// Too long (extra text)
+		parse('hi my number is +7 (800) 55-35-35-55 please get back to me', { extended: true }).should.deep.equal
+		({
+			country            : undefined,
+			countryCallingCode : '7',
+			phone              : '80055353555',
+			ext                : undefined,
+			valid              : false,
+			possible           : false,
+			starts_at 				 : 16,
+			ends_at 					 : 36,
 		})
 
 		// No national number to be parsed.
@@ -140,7 +163,22 @@ describe('parse', () =>
 			phone              : '8005553535',
 			ext                : undefined,
 			valid              : true,
-			possible           : true
+			possible           : true,
+			starts_at 				 : 0,
+			ends_at 					 : 12,
+		})
+
+		// Valid number extra text.
+		parse('my number is +78005553535 thank you', { extended: true }).should.deep.equal
+		({
+			country            : 'RU',
+			countryCallingCode : '7',
+			phone              : '8005553535',
+			ext                : undefined,
+			valid              : true,
+			possible           : true,
+			starts_at 				 : 13,
+			ends_at 					 : 25,
 		})
 	})
 

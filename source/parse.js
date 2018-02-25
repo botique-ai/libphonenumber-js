@@ -176,7 +176,7 @@ export default function parse(arg_1, arg_2, arg_3, arg_4)
 	}
 
 	// Parse the phone number.
-	const { number: formatted_phone_number, ext } = parse_input(text)
+	const { number: formatted_phone_number, ext, starts_at, ends_at } = parse_input(text)
 
 	// If the phone number is not viable then return nothing.
 	if (!formatted_phone_number)
@@ -234,7 +234,9 @@ export default function parse(arg_1, arg_2, arg_3, arg_4)
 		valid,
 		possible : valid ? true : (options.extended === true) && metadata.possibleLengths() && is_possible_number(national_number, countryCallingCode !== undefined, metadata),
 		phone    : national_number,
-		ext
+		ext,
+		starts_at,
+		ends_at,
 	}
 }
 
@@ -255,23 +257,30 @@ export function extract_formatted_phone_number(text)
 {
 	if (!text || text.length > MAX_INPUT_STRING_LENGTH)
 	{
-		return ''
+		return {
+			number: '',
+			starts_at: -1, 
+			ends_at: -1,
+		}
 	}
 
 	// Attempt to extract a possible number from the string passed in
-
-	const starts_at = text.search(PHONE_NUMBER_START_PATTERN)
+	const starts_at = text.search(PHONE_NUMBER_START_PATTERN);
+	const ends_at_index = text.search(AFTER_PHONE_NUMBER_END_PATTERN); 
+	const ends_at = ends_at_index > -1 ? ends_at_index : text.length;
 
 	if (starts_at < 0)
 	{
-		return ''
+		return {number: '', starts_at: -1, ends_at: -1}
 	}
 
-	return text
-		// Trim everything to the left of the phone number
-		.slice(starts_at)
-		// Remove trailing non-numerical characters
-		.replace(AFTER_PHONE_NUMBER_END_PATTERN, '')
+	// Return the number, the first index the number appeared in the text, 
+	// and the index AFTER the last appearance
+	return({
+		number: text.slice(starts_at, ends_at),
+		starts_at,
+		ends_at,
+	});
 }
 
 // Strips any national prefix (such as 0, 1) present in the number provided
@@ -600,8 +609,7 @@ function parse_input(text)
 		return parseRFC3966(text)
 	}
 
-	let number = extract_formatted_phone_number(text)
-
+	let {number, starts_at, ends_at} = extract_formatted_phone_number(text);
 	// If the phone number is not viable, then abort.
 	if (!is_viable_phone_number(number))
 	{
@@ -613,10 +621,14 @@ function parse_input(text)
 	const with_extension_stripped = strip_extension(number)
 	if (with_extension_stripped.ext)
 	{
-		return with_extension_stripped
+		return {
+			...with_extension_stripped,
+			starts_at,
+			ends_at,
+		}
 	}
 
-	return { number }
+	return { number, starts_at, ends_at }
 }
 
 function result(country, national_number, ext)
