@@ -1,5 +1,5 @@
 {
-  "name": "libphonenumber-js",
+  "name": "@botique/libphonenumber-js",
   "version": "1.0.24",
   "description": "A simpler (and smaller) rewrite of Google Android's popular libphonenumber library",
   "main": "index.common.js",
