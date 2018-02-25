@@ -13,7 +13,9 @@ export interface ParsedNumber {
     phone: TelephoneNumber,
     ext: Extension,
     possible: boolean,
-    valid: boolean
+    valid: boolean,
+    starts_at: number,
+    ends_at: number,
 }
 
 export function parse(text: string, options?: CountryCode | { defaultCountry?: CountryCode, extended?: boolean }): ParsedNumber;
