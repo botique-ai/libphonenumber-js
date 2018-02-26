@@ -40,7 +40,9 @@ export function parseRFC3966(text)
 
 	return {
 		number,
-		ext
+		ext,
+		starts_at: 0, // RFC is always detected as a whole
+		ends_at: text.length,
 	}
 }
 

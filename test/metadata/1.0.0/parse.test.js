@@ -25,39 +25,39 @@ describe('parse', () =>
 		// https://www.youtube.com/watch?v=6e1pMrYH5jI
 		//
 		// Restrict to RU
-		parse('8 (800) 555 35 35', 'RU').should.deep.equal({ country: 'RU', phone: '8005553535' })
+		parse('8 (800) 555 35 35', 'RU').should.deep.equal({ country: 'RU', phone: '8005553535', starts_at: 0, ends_at: 17 })
 		// International format
-		parse('+7 (800) 555-35-35').should.deep.equal({ country: 'RU', phone: '8005553535' })
+		parse('+7 (800) 555-35-35').should.deep.equal({ country: 'RU', phone: '8005553535', starts_at: 0, ends_at: 18 })
 		// // Restrict to US, but not a US country phone code supplied
 		// parse('+7 (800) 555-35-35', 'US').should.deep.equal({})
 		// Restrict to RU
-		parse('(800) 555 35 35', 'RU').should.deep.equal({ country: 'RU', phone: '8005553535' })
+		parse('(800) 555 35 35', 'RU').should.deep.equal({ country: 'RU', phone: '8005553535', starts_at: 0, ends_at: 15 })
 		// Default to RU
-		parse('8 (800) 555 35 35', { defaultCountry: 'RU' }).should.deep.equal({ country: 'RU', phone: '8005553535' })
+		parse('8 (800) 555 35 35', { defaultCountry: 'RU' }).should.deep.equal({ country: 'RU', phone: '8005553535', starts_at: 0, ends_at: 17 })
 
 		// Gangster partyline
-		parse('+1-213-373-4253').should.deep.equal({ country: 'US', phone: '2133734253' })
+		parse('+1-213-373-4253').should.deep.equal({ country: 'US', phone: '2133734253', starts_at: 0, ends_at: 15 })
 
 		// Switzerland (just in case)
-		parse('044 668 18 00', 'CH').should.deep.equal({ country: 'CH', phone: '446681800' })
+		parse('044 668 18 00', 'CH').should.deep.equal({ country: 'CH', phone: '446681800', starts_at: 0, ends_at: 13 })
 
 		// China, Beijing
-		parse('010-852644821', 'CN').should.deep.equal({ country: 'CN', phone: '10852644821' })
+		parse('010-852644821', 'CN').should.deep.equal({ country: 'CN', phone: '10852644821', starts_at: 0, ends_at: 13 })
 
 		// France
-		parse('+33169454850').should.deep.equal({ country: 'FR', phone: '169454850' })
+		parse('+33169454850').should.deep.equal({ country: 'FR', phone: '169454850', starts_at: 0, ends_at: 12 })
 
 		// UK (Jersey)
-		parse('+44 7700 300000').should.deep.equal({ country: 'JE', phone: '7700300000' })
+		parse('+44 7700 300000').should.deep.equal({ country: 'JE', phone: '7700300000', starts_at: 0, ends_at: 15 })
 
 		// KZ
-		parse('+7 702 211 1111').should.deep.equal({ country: 'KZ', phone: '7022111111' })
+		parse('+7 702 211 1111').should.deep.equal({ country: 'KZ', phone: '7022111111', starts_at: 0, ends_at: 15 })
 
 		// Brazil
-		parse('11987654321', 'BR').should.deep.equal({ country: 'BR', phone: '11987654321' })
+		parse('11987654321', 'BR').should.deep.equal({ country: 'BR', phone: '11987654321', starts_at: 0, ends_at: 11 })
 
 		// Long country phone code.
-		parse('+212659777777').should.deep.equal({ country: 'MA', phone: '659777777' })
+		parse('+212659777777').should.deep.equal({ country: 'MA', phone: '659777777', starts_at: 0, ends_at: 13 })
 
 		// No country could be derived.
 		// parse('+212569887076').should.deep.equal({ countryPhoneCode: '212', phone: '569887076' })
@@ -65,7 +65,7 @@ describe('parse', () =>
 
 	it('should parse non-European digits', function()
 	{
-		parse('+١٢١٢٢٣٢٣٢٣٢').should.deep.equal({ country: 'US', phone: '2122323232' })
+		parse('+١٢١٢٢٣٢٣٢٣٢').should.deep.equal({ country: 'US', phone: '2122323232', starts_at: 0, ends_at: 12 })
 	})
 
 	it('should work in edge cases', function()
@@ -96,7 +96,7 @@ describe('parse', () =>
 		parse('+0123').should.deep.equal({})
 
 		// Barbados NANPA phone number
-		parse('+12460000000').should.deep.equal({ country: 'BB', phone: '2460000000' })
+		parse('+12460000000').should.deep.equal({ country: 'BB', phone: '2460000000', starts_at: 0, ends_at: 12 })
 
 		// // A case when country (restricted to) is not equal
 		// // to the one parsed out of an international number.
@@ -109,11 +109,11 @@ describe('parse', () =>
 		parse('222222222222222222', 'US').should.deep.equal({})
 
 		// No `national_prefix_for_parsing`
-		parse('41111', 'AC').should.deep.equal({ country: 'AC', phone: '41111'})
+		parse('41111', 'AC').should.deep.equal({ country: 'AC', phone: '41111', starts_at: 0, ends_at: 5})
 
 		// National prefix transform rule (Mexico).
 		// Local cell phone from a land line: 044 -> 1.
-		parse('0445511111111', 'MX').should.deep.equal({ country: 'MX', phone: '15511111111' })
+		parse('0445511111111', 'MX').should.deep.equal({ country: 'MX', phone: '15511111111', starts_at: 0, ends_at: 13 })
 
 		// No metadata
 		thrower = () => parser('')
@@ -135,7 +135,9 @@ describe('parse', () =>
 		({
 			country : 'US',
 			phone   : '2134567890',
-			ext     : '123'
+			ext     : '123',
+			starts_at: 0, 
+			ends_at: 18,
 		})
 
 		// "ext."
@@ -143,7 +145,9 @@ describe('parse', () =>
 		({
 			country : 'US',
 			phone   : '2134567890',
-			ext     : '12345'
+			ext     : '12345',
+			starts_at: 0,
+			ends_at: 23,
 		})
 
 		// "#"
@@ -151,7 +155,9 @@ describe('parse', () =>
 		({
 			country : 'US',
 			phone   : '2134567890',
-			ext     : '1234'
+			ext     : '1234',
+			starts_at: 0,
+			ends_at: 17,
 		})
 
 		// "x"
@@ -159,7 +165,9 @@ describe('parse', () =>
 		({
 			country : 'RU',
 			phone   : '8005553535',
-			ext     : '1234'
+			ext     : '1234',
+			starts_at: 0,
+			ends_at: 18,
 		})
 
 		// Not a valid extension
@@ -172,7 +180,9 @@ describe('parse', () =>
 		({
 			country : 'RU',
 			phone   : '8005553535',
-			ext     : '123'
+			ext     : '123',
+			starts_at: 0,
+			ends_at: 24,
 		})
 	})
 })

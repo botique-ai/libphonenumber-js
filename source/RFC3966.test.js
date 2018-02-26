@@ -14,22 +14,28 @@ describe('RFC3966', () =>
 	{
 		parseRFC3966('tel:+78005553535;ext:123').should.deep.equal
 		({
-			number : '+78005553535',
-			ext    : '123'
+			number 		: '+78005553535',
+			ext    		: '123',
+			starts_at	: 0,
+			ends_at		: 24,
 		})
 
 		// With `phone-context`
 		parseRFC3966('tel:8005553535;ext:123;phone-context:+7').should.deep.equal
 		({
-			number : '+78005553535',
-			ext    : '123'
+			number 		: '+78005553535',
+			ext    		: '123',
+			starts_at	: 0,
+			ends_at		: 39,
 		})
 
 		// "Domain contexts" are ignored
 		parseRFC3966('tel:8005553535;ext:123;phone-context:www.leningrad.spb.ru').should.deep.equal
 		({
 			number : '8005553535',
-			ext    : '123'
+			ext    : '123',
+			starts_at: 0,
+			ends_at: 57,
 		})
 	})
 })
