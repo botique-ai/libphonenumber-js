@@ -129,7 +129,7 @@ const VALID_PHONE_NUMBER_PATTERN = new RegExp
 'i')
 
 // This consists of the plus symbol, digits, and arabic-indic digits.
-const PHONE_NUMBER_START_PATTERN = new RegExp('[' + PLUS_CHARS + VALID_DIGITS + ']')
+const PHONE_NUMBER_START_PATTERN = new RegExp('[' + '\(' + PLUS_CHARS + VALID_DIGITS + ']')
 
 // Regular expression of trailing characters that we want to remove.
 const AFTER_PHONE_NUMBER_END_PATTERN = new RegExp('[^' + VALID_DIGITS + ']+$')
@@ -605,7 +605,7 @@ function parse_input(text)
 {
 	// Parse RFC 3966 phone number URI.
 	if (text && text.indexOf('tel:') === 0)
-	{
+	{	
 		return parseRFC3966(text)
 	}
 
