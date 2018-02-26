@@ -225,7 +225,7 @@ export default function parse(arg_1, arg_2, arg_3, arg_4)
 
 	if (!options.extended)
 	{
-		return valid ? result(country, national_number, ext) : {}
+		return valid ? result(country, national_number, ext, starts_at, ends_at) : {}
 	}
 
 	return {
@@ -631,12 +631,14 @@ function parse_input(text)
 	return { number, starts_at, ends_at }
 }
 
-function result(country, national_number, ext)
+function result(country, national_number, ext, starts_at, ends_at)
 {
 	const result =
 	{
 		country,
-		phone : national_number
+		phone : national_number,
+		starts_at,
+		ends_at,
 	}
 
 	if (ext)
